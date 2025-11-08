@@ -7,3 +7,4 @@ from .models import Flat
 class FlatAdmin(admin.ModelAdmin):
     search_fields = ['town', 'address']
     readonly_fields = ['created_at']
+    new_building = ['new_building']
