@@ -2,19 +2,21 @@ from django.contrib import admin
 from property.models import Flat, Complaint, Owner
 
 
+class OwnerInline(admin.TabularInline):
+    model = Owner.flats.through
+    raw_id_fields = ['owner']
+    extra = 0
+
+
 @admin.register(Flat)
 class FlatAdmin(admin.ModelAdmin):
-    search_fields = ['town', 'address']
+    search_fields = ['town', 'address', 'owner']
     readonly_fields = ['created_at']
-    # Уберите 'owner' из search_fields
-    list_display = ['address', 'price', 'new_building', 'construction_year', 'town']
+    list_display = ['address', 'price', 'new_building', 'construction_year', 'town', 'owner']
     list_editable = ['new_building']
     list_filter = ['new_building', 'rooms_number', 'has_balcony']
     raw_id_fields = ['liked_by']
-
-    # Уберите метод get_owners пока
-    # def get_owners(self, obj):
-    #     ...
+    inlines = [OwnerInline]
 
 
 @admin.register(Complaint)
@@ -31,9 +33,6 @@ class OwnerAdmin(admin.ModelAdmin):
     search_fields = ['full_name', 'phonenumber', 'pure_phone']
 
     def get_flats_count(self, obj):
-        try:
-            return obj.flats.count()
-        except:
-            return 0
+        return obj.flats.count()
 
     get_flats_count.short_description = 'Кол-во квартир'
