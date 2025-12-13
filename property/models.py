@@ -63,7 +63,6 @@ class Flat(models.Model):
         blank=True
     )
 
-
     def __str__(self):
         return f'{self.town}, {self.address} ({self.price}р.)'
 
@@ -87,3 +86,27 @@ class Complaint(models.Model):
 
     def __str__(self):
         return f'Жалоба от {self.user.username} на квартиру {self.flat.id}'
+
+
+class Owner(models.Model):
+    full_name = models.CharField('ФИО владельца', max_length=200)
+    phonenumber = models.CharField('Номер владельца', max_length=20)
+    pure_phone = PhoneNumberField(
+        'Нормализованный номер владельца',
+        region='RU',
+        blank=True,
+        null=True
+    )
+    flats = models.ManyToManyField(
+        Flat,
+        related_name='owners',
+        verbose_name='Квартиры в собственности',
+        blank=True
+    )
+
+    class Meta:
+        verbose_name = 'Owner'
+        verbose_name_plural = 'Owners'
+
+    def __str__(self):
+        return self.full_name
